@@ -1,4 +1,4 @@
-# LLM Arena 
+# [LLM Arena ](https://nullwiz.github.io/llm-arena/)
 
 A fully static React + TypeScript app for evaluating AI agents against turn‑based games. 
 I made it because I wanted to see LLMs battle each other. Turns out they suck.
@@ -8,6 +8,8 @@ your custom LLM. I only tested Deepsek and Anthropic.
 Main idea is: you implement the interface, and if it satisfies the interface, it should work.
 You should provide the prompts for the LLM aswell. See the metadata.json files on public 
 folder for examples. 
+
+If you want to try Chess or TicTacToe, they are in the public/ folder.
 
 ## 🚀 Quick Start
 
