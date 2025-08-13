@@ -8,7 +8,7 @@ export class LLMClient {
   }
 
   async generateResponse(prompt: string): Promise<LLMResponse> {
-    const startTime = Date.now();
+
     
     try {
       switch (this.config.provider) {
@@ -107,7 +107,7 @@ export class LLMClient {
 }
 
 export class ResponseParser {
-  static parseMove(response: string): any {
+  static parseMove(response: string): unknown {
     try {
       
       const cleaned = response.replace(/```json\s*|\s*```/g, '').trim();
@@ -120,7 +120,7 @@ export class ResponseParser {
       
       
       return JSON.parse(cleaned);
-    } catch (error) {
+    } catch {
       
       const rowMatch = response.match(/row["\s]*:?\s*(\d+)/i);
       const colMatch = response.match(/col["\s]*:?\s*(\d+)/i);
@@ -136,18 +136,20 @@ export class ResponseParser {
     }
   }
 
-  static validateMoveFormat(move: any, expectedFormat: 'position' | 'column' | 'custom'): boolean {
+  static validateMoveFormat(move: unknown, expectedFormat: 'position' | 'column' | 'custom'): boolean {
     if (!move || typeof move !== 'object') {
       return false;
     }
 
+    const moveObj = move as Record<string, unknown>;
+
     switch (expectedFormat) {
       case 'position':
-        return typeof move.row === 'number' && typeof move.col === 'number';
+        return typeof moveObj.row === 'number' && typeof moveObj.col === 'number';
       case 'column':
-        return typeof move.col === 'number';
+        return typeof moveObj.col === 'number';
       case 'custom':
-        return true; 
+        return true;
       default:
         return false;
     }

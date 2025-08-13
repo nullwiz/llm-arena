@@ -69,7 +69,7 @@ export class WasmGameEngineAdapter implements GameEngine {
     };
   }
 
-  getValidMoves(_state: GameState): Move[] {
+  getValidMoves(): Move[] {
 
     const validMoves = this.wasmEngine.getValidMoves();
     const wasmCurrentPlayer = this.wasmEngine.getCurrentPlayer?.();
@@ -164,7 +164,7 @@ export class WasmGameEngineAdapter implements GameEngine {
     return validMoves.includes(move.data);
   }
 
-  isGameOver(_state: GameState): boolean {
+  isGameOver(): boolean {
     return this.wasmEngine.isGameOver();
   }
 
@@ -183,7 +183,7 @@ export class WasmGameEngineAdapter implements GameEngine {
     return this.mapWasmPlayerToSystemPlayer(winner);
   }
 
-  getCurrentPlayer(_state: GameState): PlayerId {
+  getCurrentPlayer(): PlayerId {
     const wasmCurrentPlayer = this.wasmEngine.getCurrentPlayer?.();
 
     if (!wasmCurrentPlayer) {
@@ -193,7 +193,7 @@ export class WasmGameEngineAdapter implements GameEngine {
     return this.mapWasmPlayerToSystemPlayer(wasmCurrentPlayer);
   }
 
-  getBoardDisplay(_state: GameState): string {
+  getBoardDisplay(): string {
     return this.wasmEngine.render();
   }
 
@@ -237,7 +237,7 @@ export class WasmGameEngineAdapter implements GameEngine {
 
   
   getWasmState(state: GameState): string {
-    return state.metadata?.wasmState || state.board;
+    return (state.metadata?.wasmState as string) || (state.board as string);
   }
 
   

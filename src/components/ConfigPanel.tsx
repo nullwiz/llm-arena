@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LLMService, LLMConfig } from '@/services/LLMService';
 import { X, Plus, Trash2, Settings, Eye, EyeOff, TestTube } from 'lucide-react';
 import { ModalPortal } from './ModalPortal';
@@ -28,13 +28,13 @@ export function ConfigPanel({ onClose }: ConfigPanelProps) {
 
   const llmService = LLMService.getInstance();
 
+  const loadConfigs = useCallback(() => {
+    setLlmConfigs(llmService.getAllConfigs());
+  }, [llmService]);
+
   useEffect(() => {
     loadConfigs();
-  }, []);
-
-  const loadConfigs = () => {
-    setLlmConfigs(llmService.getAllConfigs());
-  };
+  }, [loadConfigs]);
 
   const handleSaveConfig = () => {
     if (!newConfig.apiKey.trim() && newConfig.provider !== 'ollama') {
@@ -105,10 +105,10 @@ export function ConfigPanel({ onClose }: ConfigPanelProps) {
         success: true,
         message: `✅ Connection successful! Model: ${response.model}`
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       setTestResult({
         success: false,
-        message: `❌ Connection failed: ${error.message || 'Unknown error'}`
+        message: `❌ Connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     } finally {
       setTestingProvider(null);

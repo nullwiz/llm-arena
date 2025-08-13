@@ -1,12 +1,11 @@
 
 
 
-import { 
-  WasmGameEngine, 
-  WasmGameWrapper, 
-  GameMetadata, 
-  validateWasmGame, 
-  createWasmGame 
+import {
+  WasmGameEngine,
+  GameMetadata,
+  validateWasmGame,
+  createWasmGame
 } from '../interfaces/WasmGameEngine';
 
 
@@ -77,10 +76,10 @@ export class WasmGameLoader {
       }
 
       return await this.loadGameFromBytes(wasmBytes, metadata);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: `Failed to load game files: ${error.message}`
+        error: `Failed to load game files: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }
@@ -120,7 +119,7 @@ export class WasmGameLoader {
       }
 
       console.log('🎮 Creating game engine...');
-      let engine: WasmGameEngine = await createWasmGame(wasmBytes, metadata);
+      const engine: WasmGameEngine = await createWasmGame(wasmBytes, metadata);
       console.log('✅ Game engine created');
 
       
@@ -153,10 +152,10 @@ export class WasmGameLoader {
         game: loadedGame
       };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: `Failed to load game: ${error.message}`
+        error: `Failed to load game: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }
@@ -185,10 +184,10 @@ export class WasmGameLoader {
       }
 
       return await this.loadGameFromBytes(wasmBytes, metadata);
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         success: false,
-        error: `Failed to load game from URL: ${error.message}`
+        error: `Failed to load game from URL: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }
@@ -226,8 +225,8 @@ export class WasmGameLoader {
       }
 
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
 
@@ -270,7 +269,7 @@ export class WasmGameLoader {
     };
   }
 
-  private validateAIPrompts(aiPrompts: any): string[] {
+  private validateAIPrompts(aiPrompts: unknown): string[] {
     const errors: string[] = [];
 
     if (typeof aiPrompts !== 'object' || aiPrompts === null) {
@@ -278,26 +277,27 @@ export class WasmGameLoader {
       return errors;
     }
 
-    
+    const promptsObj = aiPrompts as Record<string, unknown>;
+
     const stringFields = ['systemPrompt', 'gameRulesPrompt', 'moveFormatPrompt', 'stateDescriptionPrompt', 'customInstructions'];
     for (const field of stringFields) {
-      if (aiPrompts[field] !== undefined && typeof aiPrompts[field] !== 'string') {
+      if (promptsObj[field] !== undefined && typeof promptsObj[field] !== 'string') {
         errors.push(`AI prompts.${field} must be a string if provided`);
       }
     }
 
-    if (aiPrompts.strategicHints !== undefined) {
-      if (!Array.isArray(aiPrompts.strategicHints)) {
+    if (promptsObj.strategicHints !== undefined) {
+      if (!Array.isArray(promptsObj.strategicHints)) {
         errors.push('AI prompts.strategicHints must be an array if provided');
-      } else if (!aiPrompts.strategicHints.every((hint: any) => typeof hint === 'string')) {
+      } else if (!(promptsObj.strategicHints as unknown[]).every((hint: unknown) => typeof hint === 'string')) {
         errors.push('All strategic hints must be strings');
       }
     }
 
-    if (aiPrompts.moveExamples !== undefined) {
-      if (!Array.isArray(aiPrompts.moveExamples)) {
+    if (promptsObj.moveExamples !== undefined) {
+      if (!Array.isArray(promptsObj.moveExamples)) {
         errors.push('AI prompts.moveExamples must be an array if provided');
-      } else if (!aiPrompts.moveExamples.every((example: any) => typeof example === 'string')) {
+      } else if (!(promptsObj.moveExamples as unknown[]).every((example: unknown) => typeof example === 'string')) {
         errors.push('All move examples must be strings');
       }
     }
@@ -404,7 +404,7 @@ export class WasmGameLoader {
           }
 
           
-          let engine: WasmGameEngine = await createWasmGame(wasmBytes, metadata);
+          const engine: WasmGameEngine = await createWasmGame(wasmBytes, metadata);
 
           const loadedGame: LoadedGame = {
             id: gameId,
@@ -466,7 +466,7 @@ export class WasmGameLoader {
 export const wasmGameLoader = new WasmGameLoader();
 
 
-(globalThis as any).debugWasmLoader = wasmGameLoader;
+(globalThis as { debugWasmLoader?: WasmGameLoader }).debugWasmLoader = wasmGameLoader;
 
 
 export function isWasmFile(file: File): boolean {

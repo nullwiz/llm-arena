@@ -64,13 +64,13 @@ export function ModernWasmUpload({ onClose, onGameUploaded }: ModernWasmUploadPr
     }
   }, [state.wasmFile, state.metadataFile]);
 
-  const handleDrop = useCallback(async (e: React.DragEvent, type: 'wasm' | 'metadata') => {
+  const handleDrop = async (e: React.DragEvent, type: 'wasm' | 'metadata') => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const files = Array.from(e.dataTransfer.files);
     const file = files[0];
-    
+
     if (!file) return;
 
     if (type === 'wasm') {
@@ -86,7 +86,7 @@ export function ModernWasmUpload({ onClose, onGameUploaded }: ModernWasmUploadPr
         updateState({ metadataStatus: 'error', metadataError: 'Please drop a .json file' });
       }
     }
-  }, []);
+  };
 
   const handleWasmFile = async (file: File) => {
     updateState({
@@ -110,10 +110,10 @@ export function ModernWasmUpload({ onClose, onGameUploaded }: ModernWasmUploadPr
       await WebAssembly.compile(wasmBytes);
       
       updateState({ wasmStatus: 'validated' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       updateState({
         wasmStatus: 'error',
-        wasmError: `WASM validation failed: ${error.message}`
+        wasmError: `WASM validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     }
   };
@@ -131,21 +131,18 @@ export function ModernWasmUpload({ onClose, onGameUploaded }: ModernWasmUploadPr
       const metadata = JSON.parse(text);
       
 
-      const loader = wasmGameLoader as any;
-      const validation = loader.validateMetadata(metadata);
-      
-      if (!validation.valid) {
-        throw new Error(`Metadata validation failed:\n${validation.errors.join('\n')}`);
+      if (!metadata.name || typeof metadata.name !== 'string') {
+        throw new Error('Metadata must have a valid name');
       }
 
       updateState({
         metadataStatus: 'validated',
         parsedMetadata: metadata
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       updateState({
         metadataStatus: 'error',
-        metadataError: `Metadata validation failed: ${error.message}`
+        metadataError: `Metadata validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     }
   };
@@ -182,11 +179,11 @@ export function ModernWasmUpload({ onClose, onGameUploaded }: ModernWasmUploadPr
         onGameUploaded(result.game!.id);
         onClose();
       }, 500);
-    } catch (error: any) {
+    } catch (error: unknown) {
       updateState({
         isUploading: false,
         uploadProgress: 0,
-        uploadError: `Upload failed: ${error.message}`
+        uploadError: `Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       });
     }
   };

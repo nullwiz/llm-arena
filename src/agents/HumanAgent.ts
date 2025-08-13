@@ -13,7 +13,7 @@ export class HumanAgent implements Agent {
     this.name = name;
   }
 
-  async getMove(state: GameState, playerId: PlayerId): Promise<Move> {
+  async getMove(): Promise<Move> {
     return new Promise((resolve, reject) => {
       this.moveResolver = resolve;
       this.moveRejecter = reject;
@@ -57,15 +57,15 @@ export class HumanAgent implements Agent {
     return this.moveResolver !== null;
   }
 
-  async onGameStart(state: GameState, playerId: PlayerId): Promise<void> {
+  async onGameStart(_state: GameState, playerId: PlayerId): Promise<void> {
     console.log(`${this.name} (${playerId}) joined the game`);
   }
 
-  async onGameEnd(state: GameState, result: string): Promise<void> {
+  async onGameEnd(_state: GameState, result: string): Promise<void> {
     console.log(`Game ended for ${this.name}: ${result}`);
   }
 
-  async onOpponentMove(state: GameState, move: Move): Promise<void> {
+  async onOpponentMove(_state: GameState, move: Move): Promise<void> {
     console.log(`${this.name} observed opponent move:`, move);
   }
 }

@@ -45,5 +45,5 @@ export interface AgentSettings {
   llm?: LLMConfig;
   ruleBasedStrategy?: string;
   humanTimeout?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }

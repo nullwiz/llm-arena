@@ -9,17 +9,17 @@ export interface Position {
 export interface Move {
   playerId: PlayerId;
   position?: Position;
-  data?: any; 
+  data?: unknown;
   timestamp: number;
 }
 
 export interface GameState {
-  board?: any; 
+  board?: unknown;
   currentPlayer: PlayerId;
   moves: Move[];
   result: GameResult;
   winner?: PlayerId;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface GameEngine {
@@ -57,14 +57,14 @@ export interface GameConfig {
   engine: GameEngine;
   player1: AgentConfig;
   player2: AgentConfig;
-  settings?: Record<string, any>;
+  settings?: Record<string, unknown>;
 }
 
 export interface AgentConfig {
   type: 'human' | 'llm' | 'empty';
   name: string;
   providerId?: string; 
-  settings?: Record<string, any>;
+  settings?: Record<string, unknown>;
 }
 
 export interface MatchResult {

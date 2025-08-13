@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { GameConfig, Agent } from '@/types';
+import { useEffect, useState, useCallback } from 'react';
+import { GameConfig, Agent, Move } from '@/types';
 import { useGameMatch } from '@/hooks/useGameMatch';
 import { HumanAgent, LLMAgent } from '@/agents';
 import { GameBoard } from './GameBoard';
 import { TranscriptPanel } from './TranscriptPanel';
 
-import { Terminal, HardDrive, RotateCcw, Settings } from 'lucide-react';
+import { Terminal, HardDrive, RotateCcw } from 'lucide-react';
 
 interface MatchViewProps {
   gameConfig: GameConfig;
@@ -21,15 +21,7 @@ export function MatchView({ gameConfig, onBack }: MatchViewProps) {
     player2: null
   });
 
-  useEffect(() => {
-    const currentKey = `${gameConfig.engine.name}-${gameConfig.player1.type}-${gameConfig.player2.type}`;
-    if (initializationKey !== currentKey) {
-      setInitializationKey(currentKey);
-      initializeAgents();
-    }
-  }, [gameConfig, initializationKey]);
-
-  const initializeAgents = async () => {
+  const initializeAgents = useCallback(async () => {
     if (matchState.isPlaying) {
       return;
     }
@@ -73,26 +65,19 @@ export function MatchView({ gameConfig, onBack }: MatchViewProps) {
         player2: newAgents.player2
       });
     }
-  };
+  }, [matchState.isPlaying, gameConfig, matchActions, setAgents]);
 
-
-
-  const handleCellClick = async (row: number, col: number) => {
-    if (!matchState.currentState || matchState.isGameOver) return;
-
-    const currentPlayer = matchState.currentState.currentPlayer;
-    const agent = agents[currentPlayer];
-
-    if (agent instanceof HumanAgent && agent.isWaitingForMove()) {
-      if (gameConfig.engine.name.toLowerCase().includes('connect')) {
-        agent.submitMove({ data: { col } }, currentPlayer);
-      } else {
-        agent.submitMove({ position: { row, col } }, currentPlayer);
-      }
+  useEffect(() => {
+    const currentKey = `${gameConfig.engine.name}-${gameConfig.player1.type}-${gameConfig.player2.type}`;
+    if (initializationKey !== currentKey) {
+      setInitializationKey(currentKey);
+      initializeAgents();
     }
-  };
+  }, [gameConfig, initializationKey, initializeAgents]);
 
-  const handleMove = async (move: any) => {
+
+
+  const handleMove = async (move: Move) => {
     if (!matchState.currentState || matchState.isGameOver) return;
 
     const currentPlayer = matchState.currentState.currentPlayer;
@@ -201,7 +186,6 @@ export function MatchView({ gameConfig, onBack }: MatchViewProps) {
           <GameBoard
             gameEngine={gameConfig.engine}
             gameState={matchState.currentState}
-            onCellClick={handleCellClick}
             onMove={handleMove}
             disabled={matchState.isGameOver || !matchState.isPlaying}
             isPlayerTurn={matchState.isPlaying && !matchState.isGameOver}

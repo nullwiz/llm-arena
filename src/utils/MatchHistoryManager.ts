@@ -20,7 +20,7 @@ export class MatchHistoryManager {
 
   static saveMatch(result: MatchResult): string {
     const entry: MatchHistoryEntry = {
-      id: `match-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `match-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       timestamp: new Date().toISOString(),
       result,
       summary: {
@@ -122,7 +122,7 @@ export class MatchHistoryManager {
       }
 
       this.saveHistory(finalHistory);
-    } catch (error) {
+    } catch {
       throw new Error('Failed to import match history: Invalid format');
     }
   }

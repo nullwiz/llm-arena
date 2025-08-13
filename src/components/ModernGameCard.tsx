@@ -1,14 +1,15 @@
-import React from 'react';
+import { } from 'react';
 import { CheckCircle, Zap, Monitor, Cpu, Star } from 'lucide-react';
+import { GameMetadata } from '@/interfaces/WasmGameEngine';
 
 interface ModernGameCardProps {
-  metadata: any;
+  metadata: GameMetadata;
   isSelected: boolean;
   onClick: () => void;
 }
 
 export function ModernGameCard({ metadata, isSelected, onClick }: ModernGameCardProps) {
-  const getGameIcon = (metadata: any) => {
+  const getGameIcon = (metadata: GameMetadata) => {
     const gameType = metadata.gameType?.toLowerCase() || metadata.name.toLowerCase();
     
     if (gameType.includes('chess')) return '♟️';
@@ -21,16 +22,11 @@ export function ModernGameCard({ metadata, isSelected, onClick }: ModernGameCard
     return '🎮';
   };
 
-  const getGradientClasses = (metadata: any) => {
-    const gameType = metadata.gameType?.toLowerCase() || metadata.name.toLowerCase();
-    
-    
+  const getGradientClasses = () => {
     return 'from-gray-700/20 to-gray-900/20 border-gray-600/40 shadow-black/10';
   };
 
-  const getHoverGlow = (metadata: any) => {
-    const gameType = metadata.gameType?.toLowerCase() || metadata.name.toLowerCase();
-    
+  const getHoverGlow = () => {
     return 'group-hover:shadow-gray-500/20';
   };
 
@@ -49,14 +45,14 @@ export function ModernGameCard({ metadata, isSelected, onClick }: ModernGameCard
       </div>
 
       {}
-      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${getGradientClasses(metadata)} opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl ${getHoverGlow(metadata)}`} />
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${getGradientClasses()} opacity-0 group-hover:opacity-100 transition-all duration-500 blur-xl ${getHoverGlow()}`} />
       
       {}
       <div className={`relative bg-gradient-to-br from-gray-800/90 via-gray-900/90 to-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-500 ${
         isSelected 
-          ? `${getGradientClasses(metadata)} shadow-2xl` 
+          ? `${getGradientClasses()} shadow-2xl`
           : 'border-gray-700/50 hover:border-gray-600/50'
-      } ${getHoverGlow(metadata)}`}>
+      } ${getHoverGlow()}`}>
         
         {}
         {isSelected && (
@@ -73,7 +69,7 @@ export function ModernGameCard({ metadata, isSelected, onClick }: ModernGameCard
             {getGameIcon(metadata)}
           </div>
           {}
-          <div className={`w-16 h-2 mx-auto rounded-full bg-gradient-to-r ${getGradientClasses(metadata)} opacity-0 group-hover:opacity-60 transition-opacity duration-300 blur-sm`} />
+          <div className={`w-16 h-2 mx-auto rounded-full bg-gradient-to-r ${getGradientClasses()} opacity-0 group-hover:opacity-60 transition-opacity duration-300 blur-sm`} />
         </div>
 
         {}

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ScrollText, Activity, Terminal } from 'lucide-react';
+import { ScrollText, Activity } from 'lucide-react';
 
 interface TranscriptPanelProps {
   transcript: string[];
@@ -86,7 +86,7 @@ function formatTranscriptEntry(entry: string): React.ReactElement {
   if (cleanEntry.includes('made move:') || cleanEntry.includes('response:')) {
     const agentMatch = cleanEntry.match(/^(.*?)\s+(made move|response):\s*(.*)$/);
     if (agentMatch) {
-      const [, agentName, action, moveData] = agentMatch;
+      const [, agentName, , moveData] = agentMatch;
       return (
         <div className="text-gray-300 flex items-start">
           <span className="text-xs text-gray-500 mr-2 mt-0.5">{timestamp}</span>

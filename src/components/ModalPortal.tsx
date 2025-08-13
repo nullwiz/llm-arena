@@ -24,8 +24,8 @@ export function ModalPortal({ children }: ModalPortalProps) {
       document.body.style.overflow = prevOverflow;
       try {
         document.body.removeChild(el);
-      } catch (_) {
-
+      } catch {
+        // Ignore errors when removing element
       }
     };
   }, []);

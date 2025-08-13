@@ -1,4 +1,4 @@
-import { Terminal, Settings, Code, Database, CircuitBoard } from 'lucide-react';
+import { Terminal, Settings, Code, Database } from 'lucide-react';
 
 type AppView = 'selection' | 'match' | 'config' | 'what' | 'feedback' | 'bugs';
 

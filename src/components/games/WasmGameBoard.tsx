@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { GameState, Move } from '@/types';
 import { WasmGameEngineAdapter } from '../../engines/WasmGameEngineAdapter';
 
@@ -30,18 +30,18 @@ export function WasmGameBoard({
       console.log('🎮 WasmGameBoard: Rendering game state...');
 
       
-      const rendered = gameEngine.getBoardDisplay(gameState);
+      const rendered = gameEngine.getBoardDisplay();
       setRenderedBoard(rendered);
       console.log('✅ WasmGameBoard: Board rendered');
 
       
-      const moves = gameEngine.getValidMoves(gameState);
+      const moves = gameEngine.getValidMoves();
       const moveStrings = moves.map(move => move.data as string);
       setValidMoves(moveStrings);
       console.log('📋 WasmGameBoard: Valid moves:', moveStrings);
 
       
-      const gameOver = gameEngine.isGameOver(gameState);
+      const gameOver = gameEngine.isGameOver();
       setIsGameOver(gameOver);
 
       if (gameOver) {
@@ -67,7 +67,7 @@ export function WasmGameBoard({
     try {
       
       const move: Move = {
-        playerId: currentPlayer as any,
+        playerId: currentPlayer as 'player1' | 'player2',
         data: moveStr, 
         timestamp: Date.now()
       };

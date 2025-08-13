@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GameConfig, AgentConfig } from '@/types';
 
 import { wasmGameLoader } from '../services/WasmGameLoader';
@@ -46,13 +46,31 @@ export function GameSelection({ onGameStart }: GameSelectionProps) {
 
   const llmService = LLMService.getInstance();
 
+  const loadLLMProviders = useCallback(() => {
+    const configs = llmService.getAllConfigs();
+
+    if (configs.size > 0) {
+      const firstProvider = configs.keys().next().value;
+
+
+      if (player1Config.type === 'llm' && !player1Config.providerId) {
+        setPlayer1Config(prev => ({ ...prev, providerId: firstProvider }));
+      }
+
+
+      if (player2Config.type === 'llm' && !player2Config.providerId) {
+        setPlayer2Config(prev => ({ ...prev, providerId: firstProvider }));
+      }
+    }
+  }, [player1Config.type, player1Config.providerId, player2Config.type, player2Config.providerId, llmService]);
+
   useEffect(() => {
     (async () => {
       await wasmGameLoader.whenReady?.();
       loadWasmGames();
       loadLLMProviders();
     })();
-  }, []);
+  }, [loadLLMProviders]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,7 +78,7 @@ export function GameSelection({ onGameStart }: GameSelectionProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loadLLMProviders]);
 
   
   useEffect(() => {
@@ -99,23 +117,7 @@ export function GameSelection({ onGameStart }: GameSelectionProps) {
     setWasmGames(adapters);
   };
 
-  const loadLLMProviders = () => {
-    const configs = llmService.getAllConfigs();
 
-    if (configs.size > 0) {
-      const firstProvider = configs.keys().next().value;
-
-
-      if (player1Config.type === 'llm' && !player1Config.providerId) {
-        setPlayer1Config(prev => ({ ...prev, providerId: firstProvider }));
-      }
-
-
-      if (player2Config.type === 'llm' && !player2Config.providerId) {
-        setPlayer2Config(prev => ({ ...prev, providerId: firstProvider }));
-      }
-    }
-  };
 
   const handleStartGame = () => {
     if (!selectedWasmGame) {

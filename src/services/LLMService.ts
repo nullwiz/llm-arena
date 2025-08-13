@@ -267,44 +267,58 @@ export class LLMService {
     });
   }
 
-  private parseResponse(data: any, provider: string): LLMResponse {
+  private parseResponse(data: unknown, provider: string): LLMResponse {
+    const responseData = data as {
+      choices?: Array<{ message?: { content?: string }; finish_reason?: string }>;
+      usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+      model?: string;
+    };
+
     switch (provider) {
       case 'openai':
       case 'deepseek':
       case 'ollama':
       case 'custom':
         return {
-          content: data.choices[0]?.message?.content || '',
-          usage: data.usage ? {
-            promptTokens: data.usage.prompt_tokens,
-            completionTokens: data.usage.completion_tokens,
-            totalTokens: data.usage.total_tokens,
+          content: responseData.choices?.[0]?.message?.content || '',
+          usage: responseData.usage ? {
+            promptTokens: responseData.usage.prompt_tokens || 0,
+            completionTokens: responseData.usage.completion_tokens || 0,
+            totalTokens: responseData.usage.total_tokens || 0,
           } : undefined,
-          model: data.model,
-          finishReason: data.choices[0]?.finish_reason || 'unknown',
+          model: responseData.model || 'unknown',
+          finishReason: responseData.choices?.[0]?.finish_reason || 'unknown',
         };
 
-      case 'anthropic':
-        return {
-          content: data.content[0]?.text || '',
-          usage: data.usage ? {
-            promptTokens: data.usage.input_tokens,
-            completionTokens: data.usage.output_tokens,
-            totalTokens: data.usage.input_tokens + data.usage.output_tokens,
-          } : undefined,
-          model: data.model,
-          finishReason: data.stop_reason || 'unknown',
+      case 'anthropic': {
+        const anthropicData = data as {
+          content?: Array<{ text?: string }>;
+          usage?: { input_tokens?: number; output_tokens?: number };
+          model?: string;
+          stop_reason?: string;
         };
+        return {
+          content: anthropicData.content?.[0]?.text || '',
+          usage: anthropicData.usage ? {
+            promptTokens: anthropicData.usage.input_tokens || 0,
+            completionTokens: anthropicData.usage.output_tokens || 0,
+            totalTokens: (anthropicData.usage.input_tokens || 0) + (anthropicData.usage.output_tokens || 0),
+          } : undefined,
+          model: anthropicData.model || 'unknown',
+          finishReason: anthropicData.stop_reason || 'unknown',
+        };
+      }
 
       default:
         throw new Error(`Unknown provider for response parsing: ${provider}`);
     }
   }
 
-  private createLLMError(status: number, errorData: any, provider: string): LLMError {
+  private createLLMError(status: number, errorData: unknown, provider: string): LLMError {
+    const errorObj = errorData as { message?: string };
     let type: LLMError['type'] = 'server_error';
     let code = `${provider}_error`;
-    let message = errorData.message || 'Unknown error';
+    let message = errorObj.message || 'Unknown error';
 
     if (status === 401 || status === 403) {
       type = 'auth';
@@ -317,7 +331,7 @@ export class LLMService {
     } else if (status === 400) {
       type = 'invalid_request';
       code = 'invalid_request';
-      message = errorData.message || 'Invalid request parameters';
+      message = errorObj.message || 'Invalid request parameters';
     } else if (status === 408 || status === 0) {
       type = 'timeout';
       code = 'request_timeout';
@@ -326,10 +340,6 @@ export class LLMService {
       type = 'server_error';
       code = 'server_error';
       message = 'Server error. Please try again later.';
-    } else if (status === 0) {
-      type = 'network';
-      code = 'network_error';
-      message = 'Network error. Please check your connection.';
     }
 
     return { code, message, type };

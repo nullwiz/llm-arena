@@ -5,7 +5,7 @@ import { WasmGameEngineAdapter } from '@/engines/WasmGameEngineAdapter';
 interface GameBoardProps {
   gameEngine: GameEngine;
   gameState: GameState | null;
-  onCellClick?: (row: number, col: number) => void;
+
   onMove?: (move: Move) => void;
   disabled?: boolean;
   isPlayerTurn?: boolean;
@@ -15,7 +15,6 @@ interface GameBoardProps {
 export function GameBoard({
   gameEngine,
   gameState,
-  onCellClick,
   onMove,
   disabled = false,
   isPlayerTurn = true,

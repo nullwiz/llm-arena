@@ -1,5 +1,5 @@
 import { Agent, GameState, Move, PlayerId, GameEngine } from '@/types';
-import { LLMService, LLMError } from '@/services/LLMService';
+import { LLMService } from '@/services/LLMService';
 import { PromptTemplateManager, GeneratedPromptTemplate } from '@/services/PromptTemplateManager';
 import { WasmGameEngineAdapter } from '@/engines/WasmGameEngineAdapter';
 
@@ -21,7 +21,7 @@ export class LLMAgent implements Agent {
     gameEngine: GameEngine,
     providerId: string
   ) {
-    this.id = `llm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    this.id = `llm-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
     this.name = name;
     this.llmService = LLMService.getInstance();
     this.providerId = providerId;
@@ -106,7 +106,7 @@ export class LLMAgent implements Agent {
     console.log(`🔍 LLMAgent: Game state currentPlayer: "${state.currentPlayer}"`);
     console.log(`🔍 LLMAgent: Game state moves count: ${state.moves?.length || 0}`);
     console.log(`🔍 LLMAgent: Game state result: "${state.result}"`);
-    console.log(`🔍 LLMAgent: Game state board:`, state.board?.substring(0, 100) + '...');
+    console.log(`🔍 LLMAgent: Game state board:`, typeof state.board === 'string' ? state.board.substring(0, 100) + '...' : state.board);
     console.log(`🔍 LLMAgent: Game state metadata:`, state.metadata);
 
     const boardDisplay = this.gameEngine.getBoardDisplay(state);
@@ -295,15 +295,15 @@ export class LLMAgent implements Agent {
     throw new Error(`Failed to generate move after ${this.maxRetries} attempts`);
   }
 
-  async onGameStart(state: GameState, playerId: PlayerId): Promise<void> {
+  async onGameStart(_state: GameState, playerId: PlayerId): Promise<void> {
     console.log(`${this.name} (${playerId}) started playing ${this.gameEngine.name}`);
   }
 
-  async onGameEnd(state: GameState, result: string): Promise<void> {
+  async onGameEnd(_state: GameState, result: string): Promise<void> {
     console.log(`${this.name} game ended with result: ${result}`);
   }
 
-  async onOpponentMove(state: GameState, move: Move): Promise<void> {
+  async onOpponentMove(_state: GameState, move: Move): Promise<void> {
     console.log(`${this.name} observed opponent move:`, move);
   }
 

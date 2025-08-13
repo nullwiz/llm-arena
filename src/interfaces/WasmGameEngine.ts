@@ -311,7 +311,7 @@ export async function validateWasmGame(wasmBytes: Uint8Array): Promise<boolean> 
     const importObject = {
       env: {
         abort: () => { throw new Error('WASM abort called'); },
-        __wbindgen_throw: (_ptr: number, _len: number) => {
+        __wbindgen_throw: () => {
           throw new Error('WASM throw called');
         }
       },
@@ -327,14 +327,14 @@ export async function validateWasmGame(wasmBytes: Uint8Array): Promise<boolean> 
     try {
       instance = await WebAssembly.instantiate(module, importObject);
       console.log('✅ WASM module instantiated with imports');
-    } catch (importError: any) {
-      console.log('⚠️ Failed with imports, trying without:', importError.message);
+    } catch (importError: unknown) {
+      console.log('⚠️ Failed with imports, trying without:', importError instanceof Error ? importError.message : 'Unknown error');
       
       instance = await WebAssembly.instantiate(module);
       console.log('✅ WASM module instantiated without imports');
     }
 
-    const exports = instance.exports as any;
+    const exports = instance.exports as Record<string, WebAssembly.ExportValue>;
     console.log('📋 Available exports:', Object.keys(exports));
 
     const requiredFunctions = [
@@ -349,7 +349,7 @@ export async function validateWasmGame(wasmBytes: Uint8Array): Promise<boolean> 
     const hasMemory = 'memory' in exports;
     console.log('🧠 Has memory:', hasMemory);
 
-    let missingFunctions: string[] = [];
+    const missingFunctions: string[] = [];
     const hasRequiredFunctions = requiredFunctions.every(fn => {
       const hasFunction = fn in exports;
       if (!hasFunction) {

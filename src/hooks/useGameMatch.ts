@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { GameState, MatchResult, GameConfig, Agent, PlayerId } from '@/types';
+import { GameState, MatchResult, GameConfig, Agent, PlayerId, Move } from '@/types';
 import { MatchController, MatchControllerEvents } from '@/utils/MatchController';
 
 let globalMatchController: MatchController | null = null;
@@ -16,7 +16,7 @@ export interface GameMatchState {
 export interface GameMatchActions {
   startMatch: (config: GameConfig, agents: { player1: Agent; player2: Agent }) => Promise<void>;
   stopMatch: () => void;
-  makeMove: (move: any, playerId: PlayerId) => Promise<boolean>;
+  makeMove: (move: Move, playerId: PlayerId) => Promise<boolean>;
   resetMatch: () => void;
   exportMatch: () => string | null;
 }
@@ -108,7 +108,7 @@ export function useGameMatch(): [GameMatchState, GameMatchActions] {
     });
   }, [updateState]);
 
-  const makeMove = useCallback(async (move: any, playerId: PlayerId): Promise<boolean> => {
+  const makeMove = useCallback(async (move: Move, playerId: PlayerId): Promise<boolean> => {
     if (!matchControllerRef.current) {
       return false;
     }

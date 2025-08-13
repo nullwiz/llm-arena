@@ -7,7 +7,7 @@ export interface StoredConfig {
     theme: 'light' | 'dark';
     autoSave: boolean;
   };
-  gameSettings: Record<string, any>;
+  gameSettings: Record<string, unknown>;
 }
 
 export class ConfigManager {
@@ -166,7 +166,7 @@ export class ConfigManager {
       }
       
       this.saveConfig(currentConfig);
-    } catch (error) {
+    } catch {
       throw new Error('Invalid configuration format');
     }
   }
