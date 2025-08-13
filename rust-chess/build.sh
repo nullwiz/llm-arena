@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Build script for tic-tac-toe WASM game
+# Build script for chess WASM game
 
-echo "🦀 Building Tic-Tac-Toe WASM..."
+echo "🦀 Building Chess WASM..."
 
 # Check if wasm-pack is installed
 if ! command -v wasm-pack &> /dev/null; then
@@ -16,9 +16,9 @@ wasm-pack build --target web --out-dir pkg
 
 # Copy files to public directory if it exists
 if [ -d "../public" ]; then
-    cp pkg/tictactoe_wasm.wasm ../public/
-    cp metadata.json ../public/tictactoe_metadata.json
+    cp pkg/chess_wasm.wasm ../public/
+    cp metadata.json ../public/chess_metadata.json
     echo "✅ Copied files to public directory"
 fi
 
-echo "✅ Tic-Tac-Toe WASM build complete"
+echo "✅ Chess WASM build complete"

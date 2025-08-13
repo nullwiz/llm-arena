@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:wasm && tsc -b && vite build",
+    "build:ci": "npm run build:wasm:ci && tsc -b && vite build",
     "build:wasm": "./scripts/build-wasm.sh",
+    "build:wasm:ci": "./scripts/build-wasm-ci.sh",
     "build:js": "tsc -b && vite build",
     "build:skip-wasm": "tsc -b && vite build",
     "lint": "eslint .",
