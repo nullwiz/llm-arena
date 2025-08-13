@@ -1,0 +1,15 @@
+{
+  "name": "Tic-Tac-Toe",
+  "description": "Classic 3x3 tic-tac-toe game",
+  "version": "1.0.0",
+  "author": "LLM Arena",
+  "gameType": "board",
+  "minPlayers": 2,
+  "maxPlayers": 2,
+  "estimatedDuration": "1-5 minutes",
+  "difficulty": "beginner",
+  "tags": ["classic", "simple", "quick"],
+  "rules": "Players alternate placing X and O on a 3x3 grid. First to get 3 in a row wins.",
+  "moveFormat": "Row,column coordinates (e.g., '0,0', '1,2')",
+  "stateFormat": "JSON with 3x3 board array and game metadata"
+}

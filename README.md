@@ -13,7 +13,7 @@ folder for examples.
 
 ## 🧩 Implementing a turn based game
 
-This loads user‑provided WebAssembly games that implement a minimal standard interface. You’ll export C‑ABI functions and exchange JSON strings for state/moves.
+This loads user‑provided WebAssembly games that implement a minimal standard interface. 
 
 Required exports (C/wasm-bindgen style names shown as snake_case):
 - get_initial_state() -> char*  // JSON string of initial game state

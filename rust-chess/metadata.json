@@ -1,0 +1,15 @@
+{
+  "name": "Chess",
+  "description": "Classic chess game with full rules and AI support",
+  "version": "1.0.0",
+  "author": "LLM Arena",
+  "gameType": "chess",
+  "minPlayers": 2,
+  "maxPlayers": 2,
+  "estimatedDuration": "15-60 minutes",
+  "difficulty": "intermediate",
+  "tags": ["strategy", "classic", "board-game"],
+  "rules": "Standard chess rules apply. Players alternate turns moving pieces. The goal is to checkmate the opponent's king.",
+  "moveFormat": "UCI notation (e.g., 'e2e4', 'g1f3')",
+  "stateFormat": "JSON with FEN position and game metadata"
+}
