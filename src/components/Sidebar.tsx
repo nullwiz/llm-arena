@@ -22,7 +22,7 @@ const GitHubIcon = ({ className }: { className?: string }) => (
 const menuItems = [
   {
     id: 'selection' as AppView,
-    label: 'Game Selection',
+    label: 'Games',
     icon: Terminal,
     description: 'Choose games and configure AI agents'
   }
