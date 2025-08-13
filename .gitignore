@@ -96,7 +96,7 @@ rust-*/Cargo.lock
 *.pdb
 
 # WASM build artifacts
-*.wasm
+# *.wasm - Allow WASM files for deployment
 pkg/
 
 # TypeScript
